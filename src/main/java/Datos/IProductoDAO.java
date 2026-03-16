@@ -1,6 +1,7 @@
 package Datos;
 
 import Dominio.Producto;
+import java.util.List;
 
 /**
  *
@@ -8,4 +9,5 @@ import Dominio.Producto;
  */
 interface IProductoDAO {
     Producto buscarProducto(int id);
+    List<Producto> obtenerProductos();
 }
