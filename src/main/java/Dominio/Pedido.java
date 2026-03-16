@@ -1,5 +1,11 @@
+package Dominio;
+
 import java.time.LocalDateTime;
 
+/**
+ *
+ * @author
+ */
 public class Pedido {
 
     private int idPedido;
@@ -101,16 +107,16 @@ public class Pedido {
 
     @java.lang.Override
     public java.lang.String toString() {
-        return "Pedido{" +
-                "idPedido=" + idPedido +
-                ", fecha=" + fecha +
-                ", subtotal=" + subtotal +
-                ", iva=" + iva +
-                ", total=" + total +
-                ", estadoPedidoIdEstadoPedido=" + estadoPedidoIdEstadoPedido +
-                ", clienteIdCliente=" + clienteIdCliente +
-                ", administradorIdAdministrador=" + administradorIdAdministrador +
-                ", cajeroIdCajero=" + cajeroIdCajero +
-                '}';
+        return "Pedido{"
+                + "idPedido=" + idPedido
+                + ", fecha=" + fecha
+                + ", subtotal=" + subtotal
+                + ", iva=" + iva
+                + ", total=" + total
+                + ", estadoPedidoIdEstadoPedido=" + estadoPedidoIdEstadoPedido
+                + ", clienteIdCliente=" + clienteIdCliente
+                + ", administradorIdAdministrador=" + administradorIdAdministrador
+                + ", cajeroIdCajero=" + cajeroIdCajero
+                + '}';
     }
 }

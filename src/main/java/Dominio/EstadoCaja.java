@@ -1,3 +1,9 @@
+package Dominio;
+
+/**
+ *
+ * @author
+ */
 public class EstadoCaja {
 
     private int idEstadoCaja;
@@ -29,9 +35,9 @@ public class EstadoCaja {
 
     @java.lang.Override
     public java.lang.String toString() {
-        return "EstadoCaja{" +
-                "idEstadoCaja=" + idEstadoCaja +
-                ", nombre='" + nombre + '\'' +
-                '}';
+        return "EstadoCaja{"
+                + "idEstadoCaja=" + idEstadoCaja
+                + ", nombre='" + nombre + '\''
+                + '}';
     }
 }

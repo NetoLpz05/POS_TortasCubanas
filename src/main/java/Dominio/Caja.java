@@ -1,20 +1,26 @@
-import java.time.DateTime;
+package Dominio;
 
+import java.time.LocalDateTime;
+
+/**
+ *
+ * @author
+ */
 public class Caja {
 
     private int idCaja;
     private double montoInicial;
     private double saldoFinal;
     private double totalVentas;
-    private DateTime fechaApertura;
-    private DateTime fechaCierre;
+    private LocalDateTime fechaApertura;
+    private LocalDateTime fechaCierre;
     private int estadoCajaIdEstadoCaja;
     private int administradorIdAdministrador;
 
     public Caja() {
     }
 
-    public Caja(int idCaja, double montoInicial, double saldoFinal, double totalVentas, DateTime fechaApertura, DateTime fechaCierre, int estadoCajaIdEstadoCaja, int administradorIdAdministrador) {
+    public Caja(int idCaja, double montoInicial, double saldoFinal, double totalVentas, LocalDateTime fechaApertura, LocalDateTime fechaCierre, int estadoCajaIdEstadoCaja, int administradorIdAdministrador) {
         this.idCaja = idCaja;
         this.montoInicial = montoInicial;
         this.saldoFinal = saldoFinal;
@@ -57,19 +63,19 @@ public class Caja {
         this.totalVentas = totalVentas;
     }
 
-    public DateTime getFechaApertura() {
+    public LocalDateTime getFechaApertura() {
         return fechaApertura;
     }
 
-    public void setFechaApertura(DateTime fechaApertura) {
+    public void setFechaApertura(LocalDateTime fechaApertura) {
         this.fechaApertura = fechaApertura;
     }
 
-    public DateTime getFechaCierre() {
+    public LocalDateTime getFechaCierre() {
         return fechaCierre;
     }
 
-    public void setFechaCierre(DateTime fechaCierre) {
+    public void setFechaCierre(LocalDateTime fechaCierre) {
         this.fechaCierre = fechaCierre;
     }
 
@@ -91,15 +97,15 @@ public class Caja {
 
     @java.lang.Override
     public java.lang.String toString() {
-        return "Caja{" +
-                "idCaja=" + idCaja +
-                ", montoInicial=" + montoInicial +
-                ", saldoFinal=" + saldoFinal +
-                ", totalVentas=" + totalVentas +
-                ", fechaApertura=" + fechaApertura +
-                ", fechaCierre=" + fechaCierre +
-                ", estadoCajaIdEstadoCaja=" + estadoCajaIdEstadoCaja +
-                ", administradorIdAdministrador=" + administradorIdAdministrador +
-                '}';
+        return "Caja{"
+                + "idCaja=" + idCaja
+                + ", montoInicial=" + montoInicial
+                + ", saldoFinal=" + saldoFinal
+                + ", totalVentas=" + totalVentas
+                + ", fechaApertura=" + fechaApertura
+                + ", fechaCierre=" + fechaCierre
+                + ", estadoCajaIdEstadoCaja=" + estadoCajaIdEstadoCaja
+                + ", administradorIdAdministrador=" + administradorIdAdministrador
+                + '}';
     }
 }

@@ -1,3 +1,9 @@
+package Dominio;
+
+/**
+ *
+ * @author
+ */
 public class Producto {
 
     private int idProducto;
@@ -39,10 +45,10 @@ public class Producto {
 
     @java.lang.Override
     public java.lang.String toString() {
-        return "Producto{" +
-                "idProducto=" + idProducto +
-                ", nombre='" + nombre + '\'' +
-                ", precioBase=" + precioBase +
-                '}';
+        return "Producto{"
+                + "idProducto=" + idProducto
+                + ", nombre='" + nombre + '\''
+                + ", precioBase=" + precioBase
+                + '}';
     }
 }

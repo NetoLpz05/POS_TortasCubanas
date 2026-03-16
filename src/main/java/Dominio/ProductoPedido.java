@@ -1,3 +1,9 @@
+package Dominio;
+
+/**
+ *
+ * @author
+ */
 public class ProductoPedido {
 
     private int idProductoPedido;
@@ -69,13 +75,13 @@ public class ProductoPedido {
 
     @java.lang.Override
     public java.lang.String toString() {
-        return "ProductoPedido{" +
-                "idProductoPedido=" + idProductoPedido +
-                ", precio=" + precio +
-                ", detalles='" + detalles + '\'' +
-                ", pedidoIdPedido=" + pedidoIdPedido +
-                ", carritoIdCarrito=" + carritoIdCarrito +
-                ", productoIdProducto=" + productoIdProducto +
-                '}';
+        return "ProductoPedido{"
+                + "idProductoPedido=" + idProductoPedido
+                + ", precio=" + precio
+                + ", detalles='" + detalles + '\''
+                + ", pedidoIdPedido=" + pedidoIdPedido
+                + ", carritoIdCarrito=" + carritoIdCarrito
+                + ", productoIdProducto=" + productoIdProducto
+                + '}';
     }
 }

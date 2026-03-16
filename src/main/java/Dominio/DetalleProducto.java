@@ -1,5 +1,9 @@
-import java.time.LocalDateTime;
+package Dominio;
 
+/**
+ *
+ * @author
+ */
 public class DetalleProducto {
 
     private int idDetalleProducto;
@@ -41,10 +45,10 @@ public class DetalleProducto {
 
     @java.lang.Override
     public java.lang.String toString() {
-        return "DetalleProducto{" +
-                "idDetalleProducto=" + idDetalleProducto +
-                ", detalle='" + detalle + '\'' +
-                ", productoIdProducto=" + productoIdProducto +
-                '}';
+        return "DetalleProducto{"
+                + "idDetalleProducto=" + idDetalleProducto
+                + ", detalle='" + detalle + '\''
+                + ", productoIdProducto=" + productoIdProducto
+                + '}';
     }
 }

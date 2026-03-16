@@ -1,3 +1,9 @@
+package Dominio;
+
+/**
+ *
+ * @author
+ */
 public class Cajero {
 
     private int idCajero;
@@ -39,10 +45,10 @@ public class Cajero {
 
     @java.lang.Override
     public java.lang.String toString() {
-        return "Cajero{" +
-                "idCajero=" + idCajero +
-                ", contrasena='" + contrasena + '\'' +
-                ", tipo='" + tipo + '\'' +
-                '}';
+        return "Cajero{"
+                + "idCajero=" + idCajero
+                + ", contrasena='" + contrasena + '\''
+                + ", tipo='" + tipo + '\''
+                + '}';
     }
 }

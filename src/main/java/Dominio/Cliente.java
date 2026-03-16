@@ -1,3 +1,9 @@
+package Dominio;
+
+/**
+ *
+ * @author
+ */
 public class Cliente {
 
     private int idCliente;
@@ -69,13 +75,13 @@ public class Cliente {
 
     @java.lang.Override
     public java.lang.String toString() {
-        return "Cliente{" +
-                "idCliente=" + idCliente +
-                ", telefono='" + telefono + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", direccion='" + direccion + '\'' +
-                ", rfc='" + rfc + '\'' +
-                ", correo='" + correo + '\'' +
-                '}';
+        return "Cliente{"
+                + "idCliente=" + idCliente
+                + ", telefono='" + telefono + '\''
+                + ", nombre='" + nombre + '\''
+                + ", direccion='" + direccion + '\''
+                + ", rfc='" + rfc + '\''
+                + ", correo='" + correo + '\''
+                + '}';
     }
 }

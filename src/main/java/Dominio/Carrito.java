@@ -1,5 +1,11 @@
+package Dominio;
+
 import java.time.LocalDateTime;
 
+/**
+ *
+ * @author
+ */
 public class Carrito {
 
     private int idCarrito;
@@ -41,10 +47,10 @@ public class Carrito {
 
     @java.lang.Override
     public java.lang.String toString() {
-        return "Carrito{" +
-                "idCarrito=" + idCarrito +
-                ", ultimaActualizacion=" + ultimaActualizacion +
-                ", clienteIdCliente=" + clienteIdCliente +
-                '}';
+        return "Carrito{"
+                + "idCarrito=" + idCarrito
+                + ", ultimaActualizacion=" + ultimaActualizacion
+                + ", clienteIdCliente=" + clienteIdCliente
+                + '}';
     }
 }

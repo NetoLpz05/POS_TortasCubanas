@@ -1,3 +1,9 @@
+package Dominio;
+
+/**
+ *
+ * @author
+ */
 public class EstadoPedido {
 
     private int idEstadoPedido;
@@ -29,9 +35,9 @@ public class EstadoPedido {
 
     @java.lang.Override
     public java.lang.String toString() {
-        return "EstadoPedido{" +
-                "idEstadoPedido=" + idEstadoPedido +
-                ", nombre='" + nombre + '\'' +
-                '}';
+        return "EstadoPedido{"
+                + "idEstadoPedido=" + idEstadoPedido
+                + ", nombre='" + nombre + '\''
+                + '}';
     }
 }

@@ -1,3 +1,9 @@
+package Dominio;
+
+/**
+ *
+ * @author
+ */
 public class Administrador {
 
     private int idAdministrador;
@@ -39,10 +45,10 @@ public class Administrador {
 
     @java.lang.Override
     public java.lang.String toString() {
-        return "Administrador{" +
-                "idAdministrador=" + idAdministrador +
-                ", contrasena='" + contrasena + '\'' +
-                ", tipo='" + tipo + '\'' +
-                '}';
+        return "Administrador{"
+                + "idAdministrador=" + idAdministrador
+                + ", contrasena='" + contrasena + '\''
+                + ", tipo='" + tipo + '\''
+                + '}';
     }
 }
