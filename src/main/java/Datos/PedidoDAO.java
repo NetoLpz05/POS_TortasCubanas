@@ -19,4 +19,8 @@ public class PedidoDAO implements IPedidoDAO {
 
         System.out.println("Venta registrada correctamente");
     }
+    
+    public List<Pedido> obtenerPedidos() {
+        return pedidos;
+    }
 }
