@@ -21,9 +21,11 @@ public class Menu_Principal extends JFrame {
     private OverlayPanel overlay;
 
     private List<ProductoPedido> carrito = new ArrayList<>();
-    private JTextArea ordenArea;
+    private DefaultListModel<String> modeloOrden;
+    private JList<String> listaOrden;
     private double total = 0;
     private JPanel productosPanel;
+    private JLabel totalLabel;
 
     public Menu_Principal() {
         setTitle("Tortas Cubanas POS");
@@ -39,6 +41,8 @@ public class Menu_Principal extends JFrame {
         productosPanel = new JPanel(new GridLayout(0, 3, 20, 20));
         add(new JScrollPane(productosPanel), BorderLayout.CENTER);
         add(createOrdenPanel(), BorderLayout.EAST);
+
+        cargarProductos("TORTAS");
     }
 
     private JPanel createSidebar() {
@@ -67,20 +71,7 @@ public class Menu_Principal extends JFrame {
         return btn;
     }
 
-    private JScrollPane createProductos() {
-        JPanel grid = new JPanel(new GridLayout(0, 3, 20, 20));
-        grid.setBorder(new EmptyBorder(20, 20, 20, 20));
-        grid.setBackground(new Color(245, 245, 245));
-
-        grid.add(createCard("Torta Cubana", 80, 1));
-        grid.add(createCard("Torta Sencilla", 70, 2));
-        grid.add(createCard("Torta Cubanita", 75, 3));
-        grid.add(createCard("Torta Sencillota", 85, 4));
-
-        return new JScrollPane(grid);
-    }
-
-    private JPanel createCard(String nombre, double precio, int idProducto) {
+    private JPanel createCard(String nombre, double precio, int idProducto, String categoria) {
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createLineBorder(new Color(220,220,220),1));
@@ -107,7 +98,8 @@ public class Menu_Principal extends JFrame {
 
                 overlay.setVisible(true);
 
-                PersonalizarProducto dialog = new PersonalizarProducto(Menu_Principal.this, nombre);
+                PersonalizarProducto dialog =
+                        new PersonalizarProducto(Menu_Principal.this, nombre, categoria);
 
                 dialog.setVisible(true);
                 overlay.setVisible(false);
@@ -128,7 +120,7 @@ public class Menu_Principal extends JFrame {
                     carrito.add(pp);
                     total += precioFinal;
 
-                    actualizarOrden(nombre, precioFinal);
+                    actualizarOrden(nombre, precioFinal, dialog.getDetalles());
                 }
             }
         });
@@ -145,8 +137,47 @@ public class Menu_Principal extends JFrame {
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
         titulo.setBorder(new EmptyBorder(15,15,15,15));
 
-        ordenArea = new JTextArea("Sin productos...");
-        ordenArea.setEditable(false);
+        modeloOrden = new DefaultListModel<>();
+        listaOrden = new JList<>(modeloOrden);
+
+        listaOrden.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        listaOrden.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        listaOrden.addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseClicked(java.awt.event.MouseEvent e) {
+            if (e.getClickCount() == 2) {
+
+                int index = listaOrden.getSelectedIndex();
+
+                if (index >= 0) {
+
+                    int confirm = JOptionPane.showConfirmDialog(
+                            Menu_Principal.this,
+                            "¿Eliminar este producto?",
+                            "Confirmar",
+                            JOptionPane.YES_NO_OPTION
+                    );
+
+                    if (confirm == JOptionPane.YES_OPTION) {
+
+                        ProductoPedido eliminado = carrito.get(index);
+
+                        total -= eliminado.getPrecio();
+
+                        carrito.remove(index);
+                        modeloOrden.remove(index);
+
+                        totalLabel.setText("TOTAL: $" + String.format("%.2f", total));
+                    }
+                }
+            }
+        }
+    });
+
+        totalLabel = new JLabel("TOTAL: $0.00");
+        totalLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        totalLabel.setBorder(new EmptyBorder(10,15,10,15));
 
         JButton cobrar = new JButton("COBRAR");
         cobrar.setBackground(new Color(255,120,0));
@@ -155,22 +186,28 @@ public class Menu_Principal extends JFrame {
 
         cobrar.addActionListener(e -> procesarVenta());
 
+        JPanel bottom = new JPanel(new BorderLayout());
+        bottom.add(totalLabel, BorderLayout.NORTH);
+        bottom.add(cobrar, BorderLayout.SOUTH);
+
         panel.add(titulo, BorderLayout.NORTH);
-        panel.add(new JScrollPane(ordenArea), BorderLayout.CENTER);
-        panel.add(cobrar, BorderLayout.SOUTH);
+        panel.add(new JScrollPane(listaOrden), BorderLayout.CENTER);
+        panel.add(bottom, BorderLayout.SOUTH);
 
         return panel;
     }
 
-    private void actualizarOrden(String nombre, double precio) {
+    private void actualizarOrden(String nombre, double precio, String detalles) {
 
-        if (ordenArea.getText().equals("Sin productos...")) {
-            ordenArea.setText("");
+        String texto = nombre + " - $" + String.format("%.2f", precio);
+
+        if (detalles != null && !detalles.trim().isEmpty()) {
+            texto += " (" + detalles + ")";
         }
 
-        ordenArea.append(nombre + " - $" + precio + "\n");
-        ordenArea.append("------------------\n");
-        ordenArea.append("TOTAL: $" + total + "\n\n");
+        modeloOrden.addElement(texto);
+
+        totalLabel.setText("TOTAL: $" + String.format("%.2f", total));
     }
 
     private void procesarVenta() {
@@ -203,15 +240,16 @@ public class Menu_Principal extends JFrame {
         boolean ok = servicio.procesarVenta(pedido, carrito, pago);
 
         JOptionPane.showMessageDialog(this,
-                "TOTAL: $" + totalFinal +
+                "TOTAL: $" + String.format("%.2f", totalFinal) +
                 "\nVenta: " + (ok ? "Exitosa" : "Error")
         );
 
         carrito.clear();
         total = 0;
-        ordenArea.setText("Sin productos...");
+        modeloOrden.clear();
+        totalLabel.setText("TOTAL: $0.00");
     }
-    
+
     private void cargarProductos(String categoria) {
 
         productosPanel.removeAll();
@@ -221,9 +259,10 @@ public class Menu_Principal extends JFrame {
 
         for (Producto p : productos) {
             productosPanel.add(createCard(
-                    p.getNombre(),
-                    p.getPrecioBase(),
-                    p.getIdProducto()
+                p.getNombre(),
+                p.getPrecioBase(),
+                p.getIdProducto(),
+                p.getCategoria()
             ));
         }
 

@@ -65,7 +65,7 @@ public class ProductoDAO implements IProductoDAO {
 
         List<Producto> lista = new ArrayList<>();
 
-        String sql = "SELECT * FROM producto WHERE categoria = ?";
+        String sql = "SELECT idProducto, nombre, precioBase, categoria FROM Producto WHERE categoria = ?";
 
         try (Connection con = Conexion.obtenerConexion();
              PreparedStatement ps = con.prepareStatement(sql)) {
@@ -76,7 +76,7 @@ public class ProductoDAO implements IProductoDAO {
 
             while (rs.next()) {
                 Producto p = new Producto();
-                p.setIdProducto(rs.getInt("idproducto"));
+                p.setIdProducto(rs.getInt("idProducto"));
                 p.setNombre(rs.getString("nombre"));
                 p.setPrecioBase(rs.getDouble("precioBase"));
                 p.setCategoria(rs.getString("categoria"));
