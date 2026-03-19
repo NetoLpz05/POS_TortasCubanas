@@ -24,12 +24,28 @@ public class ServicioVenta {
             System.err.println("Error: El carrito está vacío.");
             return false;
         }
+        if (pedido.getTotal() <= 0) {
+            System.err.println("Error: Total inválido.");
+            return false;
+        }
         if (pago.getMonto() < pedido.getTotal()) {
             System.err.println("Error: El pago es menor al total del pedido.");
             return false;
         }
+        if (pedido.getClienteIdCliente() <= 0) {
+            pedido.setClienteIdCliente(1);
+        }
+        //venta
+        boolean resultado = pedidoDAO.registrarVentaCompleta(pedido, carrito, pago);
 
-        // Si todo está bien, mandamos a guardar a la base de datos
-        return pedidoDAO.registrarVentaCompleta(pedido, carrito, pago);
+        if (resultado) {
+            System.out.println("Venta realizada");
+        } else {
+            System.err.println(" Error al registrar venta");
+        }
+
+
+        // se manda a base datos
+        return resultado;
     }
 }

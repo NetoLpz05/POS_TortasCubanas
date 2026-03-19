@@ -21,8 +21,9 @@ public class PedidoDAO {
         // SQL actualizado con los nombres de las columnas que asumo tienes en BD 
         // y contemplando el Cajero_idCajero
         String sqlPedido = "INSERT INTO Pedido (fecha, subtotal, iva, total, EstadoPedido_idEstadoPedido, Cliente_idCliente, Administrador_idAdministrador, Cajero_idCajero) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        String sqlDetalle = "INSERT INTO ProductoPedido (precio, detalles, Pedido_idPedido, Producto_idProducto) VALUES (?, ?, ?, ?)";
+        String sqlDetalle = "INSERT INTO ProductoPedido (precio, detalles, Pedido_idPedido, Carrito_idCarrito, Producto_idProducto) VALUES (?, ?, ?, ?, ?)";
         String sqlPago = "INSERT INTO Pago (monto, fecha, propina, Pedido_idPedido, Caja_idCaja) VALUES (?, ?, ?, ?, ?)";
+        String sqlActualizarCaja = "UPDATE Caja SET totalVentas = totalVentas + ? WHERE idCaja = ?";
 
         try {
             con = Conexion.obtenerConexion();
@@ -79,9 +80,10 @@ public class PedidoDAO {
             for (ProductoPedido detalle : detalles) {
                 psDetalle.setDouble(1, detalle.getPrecio());
                 psDetalle.setString(2, detalle.getDetalles());
-                psDetalle.setInt(3, idPedidoGenerado); 
-                                
-                psDetalle.setInt(4, detalle.getProductoIdProducto()); 
+                psDetalle.setInt(3, idPedidoGenerado);
+
+                psDetalle.setInt(4, 1);
+                psDetalle.setInt(5, detalle.getProductoIdProducto());
                 
                 psDetalle.addBatch();
             }
@@ -98,6 +100,11 @@ public class PedidoDAO {
             psPago.setInt(5, pago.getCajaIdCaja());
             
             psPago.executeUpdate();
+            try (PreparedStatement psCaja = con.prepareStatement(sqlActualizarCaja)) {
+                psCaja.setDouble(1, pedido.getTotal());
+                psCaja.setInt(2, pago.getCajaIdCaja());
+                psCaja.executeUpdate();
+            }
 
             // Confirmar transacción
             con.commit();

@@ -1,42 +1,63 @@
 package Datos;
 
 import Dominio.Producto;
+import conexion.Conexion;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Angel
- */
 public class ProductoDAO implements IProductoDAO {
-
-    private final List<Producto> productos = new ArrayList<>();
-
-    public ProductoDAO() {
-        productos.add(new Producto(1, "Torta Cubana", 85));
-        productos.add(new Producto(1, "Torta Cubanita", 80));
-        productos.add(new Producto(2, "Torta Sencilla", 75));
-        productos.add(new Producto(1, "Orden de Quesadillas", 85));
-        productos.add(new Producto(1, "Orden de Burritos de Machaca", 95));
-        productos.add(new Producto(1, "Taco de Pierna o Pollo", 35));
-        productos.add(new Producto(1, "Agua Fresca 1L", 37));
-        productos.add(new Producto(1, "Agua Fresca 1/2L", 32));
-        productos.add(new Producto(3, "Refresco 355ml", 27));
-        productos.add(new Producto(3, "Refresco 600ml", 30));
-    }
 
     @Override
     public Producto buscarProducto(int id) {
-        for (Producto p : productos) {
-            if (p.getIdProducto() == id) {
-                return p;
+        String sql = "SELECT * FROM Producto WHERE idProducto = ?";
+        Producto producto = null;
+
+        try (Connection con = Conexion.obtenerConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, id);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                producto = new Producto(
+                        rs.getInt("idProducto"),
+                        rs.getString("nombre"),
+                        rs.getDouble("precioBase")
+                );
             }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return null;
+
+        return producto;
     }
-    
+
     @Override
     public List<Producto> obtenerProductos() {
-        return productos;
+        String sql = "SELECT * FROM Producto";
+        List<Producto> lista = new ArrayList<>();
+
+        try (Connection con = Conexion.obtenerConexion();
+             PreparedStatement ps = con.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Producto producto = new Producto(
+                        rs.getInt("idProducto"),
+                        rs.getString("nombre"),
+                        rs.getDouble("precioBase")
+                );
+                lista.add(producto);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return lista;
     }
 }
