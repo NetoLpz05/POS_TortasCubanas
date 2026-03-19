@@ -60,4 +60,34 @@ public class ProductoDAO implements IProductoDAO {
 
         return lista;
     }
+    
+    public List<Producto> obtenerPorCategoria(String categoria) {
+
+        List<Producto> lista = new ArrayList<>();
+
+        String sql = "SELECT * FROM producto WHERE categoria = ?";
+
+        try (Connection con = Conexion.obtenerConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, categoria);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Producto p = new Producto();
+                p.setIdProducto(rs.getInt("idproducto"));
+                p.setNombre(rs.getString("nombre"));
+                p.setPrecioBase(rs.getDouble("precioBase"));
+                p.setCategoria(rs.getString("categoria"));
+
+                lista.add(p);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return lista;
+    }
 }

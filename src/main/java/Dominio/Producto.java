@@ -9,6 +9,7 @@ public class Producto {
     private int idProducto;
     private String nombre;
     private double precioBase;
+    private String categoria;
 
     public Producto() {
     }
@@ -17,6 +18,13 @@ public class Producto {
         this.idProducto = idProducto;
         this.nombre = nombre;
         this.precioBase = precioBase;
+    }
+
+    public Producto(int idProducto, String nombre, double precioBase, String categoria) {
+        this.idProducto = idProducto;
+        this.nombre = nombre;
+        this.precioBase = precioBase;
+        this.categoria = categoria;
     }
 
     public int getIdProducto() {
@@ -41,6 +49,14 @@ public class Producto {
 
     public void setPrecioBase(double precioBase) {
         this.precioBase = precioBase;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     @java.lang.Override

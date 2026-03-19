@@ -18,8 +18,6 @@ public class PedidoDAO {
     public boolean registrarVentaCompleta(Pedido pedido, List<ProductoPedido> detalles, Pago pago) {
         Connection con = null;
         
-        // SQL actualizado con los nombres de las columnas que asumo tienes en BD 
-        // y contemplando el Cajero_idCajero
         String sqlPedido = "INSERT INTO Pedido (fecha, subtotal, iva, total, EstadoPedido_idEstadoPedido, Cliente_idCliente, Administrador_idAdministrador, Cajero_idCajero) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         String sqlDetalle = "INSERT INTO ProductoPedido (precio, detalles, Pedido_idPedido, Carrito_idCarrito, Producto_idProducto) VALUES (?, ?, ?, ?, ?)";
         String sqlPago = "INSERT INTO Pago (monto, fecha, propina, Pedido_idPedido, Caja_idCaja) VALUES (?, ?, ?, ?, ?)";
@@ -27,22 +25,16 @@ public class PedidoDAO {
 
         try {
             con = Conexion.obtenerConexion();
-            con.setAutoCommit(false); // Iniciar transacción
+            con.setAutoCommit(false);
 
-            // ==========================================
-            // PASO 1: INSERTAR EL PEDIDO
-            // ==========================================
             PreparedStatement psPedido = con.prepareStatement(sqlPedido, Statement.RETURN_GENERATED_KEYS);
             
-            // Convertimos LocalDateTime a Timestamp para MySQL
             psPedido.setTimestamp(1, Timestamp.valueOf(pedido.getFecha())); 
             psPedido.setDouble(2, pedido.getSubtotal());
             psPedido.setDouble(3, pedido.getIva());
             psPedido.setDouble(4, pedido.getTotal());
             psPedido.setInt(5, pedido.getEstadoPedidoIdEstadoPedido());
             
-            // Validación por si es venta al público general (sin cliente)
-            // Asumimos que si el ID es 0 o menor, no hay cliente asignado
             if (pedido.getClienteIdCliente() > 0) {
                 psPedido.setInt(6, pedido.getClienteIdCliente());
             } else {
@@ -51,7 +43,6 @@ public class PedidoDAO {
             
             psPedido.setInt(7, pedido.getAdministradorIdAdministrador());
             
-            // Manejo del cajero
             if (pedido.getCajeroIdCajero() > 0) {
                 psPedido.setInt(8, pedido.getCajeroIdCajero());
             } else {
@@ -63,7 +54,6 @@ public class PedidoDAO {
                 throw new SQLException("Fallo al crear el pedido.");
             }
 
-            // Obtener el idPedido generado
             int idPedidoGenerado = -1;
             try (ResultSet generatedKeys = psPedido.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
@@ -73,9 +63,6 @@ public class PedidoDAO {
                 }
             }
 
-            // ==========================================
-            // PASO 2: AQUI SE INSERTAN LOS DETALLES DE PRODUCTO
-            // ==========================================
             PreparedStatement psDetalle = con.prepareStatement(sqlDetalle);
             for (ProductoPedido detalle : detalles) {
                 psDetalle.setDouble(1, detalle.getPrecio());
@@ -89,9 +76,6 @@ public class PedidoDAO {
             }
             psDetalle.executeBatch();
 
-            // ==========================================
-            // PASO 3: INSERTAR EL PAGO
-            // ==========================================
             PreparedStatement psPago = con.prepareStatement(sqlPago);
             psPago.setDouble(1, pago.getMonto());
             psPago.setObject(2, pago.getFecha());
@@ -106,7 +90,6 @@ public class PedidoDAO {
                 psCaja.executeUpdate();
             }
 
-            // Confirmar transacción
             con.commit();
             return true;
 
