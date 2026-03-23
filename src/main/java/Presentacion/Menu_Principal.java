@@ -210,44 +210,101 @@ public class Menu_Principal extends JFrame {
         totalLabel.setText("TOTAL: $" + String.format("%.2f", total));
     }
 
-    private void procesarVenta() {
-
+private void procesarVenta() {
         if (carrito.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No hay productos");
+            JOptionPane.showMessageDialog(this, "No hay productos en la orden", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        // 1. Preguntar el tipo de pedido
+        String[] opciones = {"A Domicilio", "Para Comer Aquí", "Cancelar"};
+        int seleccion = JOptionPane.showOptionDialog(this,
+                "¿Cuál es el tipo de pedido?",
+                "Tipo de Orden",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, opciones, opciones[1]);
 
+        int idClienteFinal = 1; // ID por defecto para "Público General" cambienla si no cala
+        String nombreComedor = "";
+
+        //Lógica según el tipo de pedido
+        if (seleccion == 0) {
+            // --- FLUJO: A DOMICILIO ---
+            String telefono = JOptionPane.showInputDialog(this, "Ingrese el teléfono del cliente:");
+            if (telefono == null || telefono.trim().isEmpty()) return; // El usuario canceló
+            
+            boolean clienteExiste = false; 
+            
+            if (!clienteExiste) {
+                JOptionPane.showMessageDialog(this, "Cliente no encontrado. Debe registrarlo primero.");
+                return;
+            } else {
+                //idClienteFinal = cliente.getIdCliente();
+                JOptionPane.showMessageDialog(this, "Cliente encontrado."); // Mostrar info del cliente
+            }
+
+        } else if (seleccion == 1) {
+            // --- FLUJO: PARA COMER AQUÍ ---
+            nombreComedor = JOptionPane.showInputDialog(this, "Nombre del cliente (para llamarlo):");
+            if (nombreComedor == null || nombreComedor.trim().isEmpty()) return; // El usuario canceló
+            
+        } else {
+            return; 
+        }
         double iva = total * 0.16;
         double totalFinal = total + iva;
 
-        Pedido pedido = new Pedido();
-        pedido.setFecha(LocalDateTime.now());
-        pedido.setSubtotal(total);
-        pedido.setIva(iva);
-        pedido.setTotal(totalFinal);
-        pedido.setEstadoPedidoIdEstadoPedido(1);
-        pedido.setAdministradorIdAdministrador(1);
-        pedido.setCajeroIdCajero(1);
-        pedido.setClienteIdCliente(1);
+        overlay.setVisible(true);
+        
+        DialogoCobro cobroDialog = new DialogoCobro(this, totalFinal);
+        cobroDialog.setVisible(true);
+        overlay.setVisible(false);
+        
+        if (cobroDialog.isConfirmado()) {
+            double montoRecibido = cobroDialog.getMontoRecibido();
 
-        Pago pago = new Pago();
-        pago.setMonto(totalFinal);
-        pago.setFecha(LocalDateTime.now());
-        pago.setPropina(0);
-        pago.setCajaIdCaja(1);
+            // Preparar objetos para BD
+            Pedido pedido = new Pedido();
+            pedido.setFecha(LocalDateTime.now());
+            pedido.setSubtotal(total);
+            pedido.setIva(iva);
+            pedido.setTotal(totalFinal);
+            pedido.setEstadoPedidoIdEstadoPedido(1);
+            pedido.setAdministradorIdAdministrador(1);
+            pedido.setCajeroIdCajero(1);
+            pedido.setClienteIdCliente(idClienteFinal); 
 
-        ServicioVenta servicio = new ServicioVenta();
-        boolean ok = servicio.procesarVenta(pedido, carrito, pago);
+            Pago pago = new Pago();
+            pago.setMonto(montoRecibido); 
+            pago.setFecha(LocalDateTime.now());
+            pago.setPropina(0);
+            pago.setCajaIdCaja(1);
 
-        JOptionPane.showMessageDialog(this,
-                "TOTAL: $" + String.format("%.2f", totalFinal) +
-                "\nVenta: " + (ok ? "Exitosa" : "Error")
-        );
+            
+            ServicioVenta servicio = new ServicioVenta();
+            boolean ok = servicio.procesarVenta(pedido, carrito, pago);
 
-        carrito.clear();
-        total = 0;
-        modeloOrden.clear();
-        totalLabel.setText("TOTAL: $0.00");
+            if (ok) {
+                
+                int imprimir = JOptionPane.showConfirmDialog(this, 
+                        "Venta registrada con éxito.\n¿Desea imprimir una copia del ticket?", 
+                        "Venta Exitosa", 
+                        JOptionPane.YES_NO_OPTION, 
+                        JOptionPane.INFORMATION_MESSAGE);
+
+                if (imprimir == JOptionPane.YES_OPTION) {
+                    System.out.println("Enviando ticket a la impresora..."); // Lógica futura de impresión
+                }
+
+                // Limpiar sistema para la siguiente orden
+                carrito.clear();
+                total = 0;
+                modeloOrden.clear();
+                totalLabel.setText("TOTAL: $0.00");
+            } else {
+                JOptionPane.showMessageDialog(this, "Error al conectar con la base de datos.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     private void cargarProductos(String categoria) {

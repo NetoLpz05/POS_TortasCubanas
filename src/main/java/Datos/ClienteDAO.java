@@ -114,4 +114,30 @@ public class ClienteDAO implements IClienteDAO {
         }
         return lista;
     }
+    public Cliente buscarPorTelefono(String telefono) {
+    String sql = "SELECT * FROM Cliente WHERE telefono = ?";
+    Cliente cliente = null;
+    
+    try (Connection con = Conexion.obtenerConexion();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        
+        ps.setString(1, telefono);
+        
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                cliente = new Cliente(
+                    rs.getInt("idCliente"),
+                    rs.getString("telefono"),
+                    rs.getString("nombre"),
+                    rs.getString("direccion"),
+                    rs.getString("rfc"),
+                    rs.getString("correo")
+                );
+            }
+        }
+    } catch (SQLException e) {
+        System.err.println("Error al buscar cliente por teléfono: " + e.getMessage());
+    }
+    return cliente; // Retorna nulo si no encuentra a nadie
+}
 }
