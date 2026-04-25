@@ -74,17 +74,17 @@ public class Menu_Principal extends JFrame {
     private JPanel createCard(String nombre, double precio, int idProducto, String categoria) {
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(Color.WHITE);
-        card.setBorder(BorderFactory.createLineBorder(new Color(220,220,220),1));
-        card.setPreferredSize(new Dimension(180,120));
+        card.setBorder(BorderFactory.createLineBorder(new Color(220, 220, 220), 1));
+        card.setPreferredSize(new Dimension(180, 120));
 
         JLabel name = new JLabel(nombre);
         name.setFont(new Font("Segoe UI", Font.BOLD, 16));
 
         JLabel price = new JLabel("$" + precio);
         price.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        price.setForeground(new Color(255,120,0));
+        price.setForeground(new Color(255, 120, 0));
 
-        JPanel info = new JPanel(new GridLayout(2,1));
+        JPanel info = new JPanel(new GridLayout(2, 1));
         info.setBackground(Color.WHITE);
         info.add(name);
         info.add(price);
@@ -98,8 +98,8 @@ public class Menu_Principal extends JFrame {
 
                 overlay.setVisible(true);
 
-                PersonalizarProducto dialog =
-                        new PersonalizarProducto(Menu_Principal.this, nombre, categoria);
+                PersonalizarProducto dialog
+                        = new PersonalizarProducto(Menu_Principal.this, nombre, categoria);
 
                 dialog.setVisible(true);
                 overlay.setVisible(false);
@@ -135,7 +135,7 @@ public class Menu_Principal extends JFrame {
 
         JLabel titulo = new JLabel("ORDEN ACTUAL");
         titulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        titulo.setBorder(new EmptyBorder(15,15,15,15));
+        titulo.setBorder(new EmptyBorder(15, 15, 15, 15));
 
         modeloOrden = new DefaultListModel<>();
         listaOrden = new JList<>(modeloOrden);
@@ -144,43 +144,43 @@ public class Menu_Principal extends JFrame {
         listaOrden.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
         listaOrden.addMouseListener(new java.awt.event.MouseAdapter() {
-        @Override
-        public void mouseClicked(java.awt.event.MouseEvent e) {
-            if (e.getClickCount() == 2) {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (e.getClickCount() == 2) {
 
-                int index = listaOrden.getSelectedIndex();
+                    int index = listaOrden.getSelectedIndex();
 
-                if (index >= 0) {
+                    if (index >= 0) {
 
-                    int confirm = JOptionPane.showConfirmDialog(
-                            Menu_Principal.this,
-                            "¿Eliminar este producto?",
-                            "Confirmar",
-                            JOptionPane.YES_NO_OPTION
-                    );
+                        int confirm = JOptionPane.showConfirmDialog(
+                                Menu_Principal.this,
+                                "¿Eliminar este producto?",
+                                "Confirmar",
+                                JOptionPane.YES_NO_OPTION
+                        );
 
-                    if (confirm == JOptionPane.YES_OPTION) {
+                        if (confirm == JOptionPane.YES_OPTION) {
 
-                        ProductoPedido eliminado = carrito.get(index);
+                            ProductoPedido eliminado = carrito.get(index);
 
-                        total -= eliminado.getPrecio();
+                            total -= eliminado.getPrecio();
 
-                        carrito.remove(index);
-                        modeloOrden.remove(index);
+                            carrito.remove(index);
+                            modeloOrden.remove(index);
 
-                        totalLabel.setText("TOTAL: $" + String.format("%.2f", total));
+                            totalLabel.setText("TOTAL: $" + String.format("%.2f", total));
+                        }
                     }
                 }
             }
-        }
-    });
+        });
 
         totalLabel = new JLabel("TOTAL: $0.00");
         totalLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        totalLabel.setBorder(new EmptyBorder(10,15,10,15));
+        totalLabel.setBorder(new EmptyBorder(10, 15, 10, 15));
 
         JButton cobrar = new JButton("COBRAR");
-        cobrar.setBackground(new Color(255,120,0));
+        cobrar.setBackground(new Color(255, 120, 0));
         cobrar.setForeground(Color.WHITE);
         cobrar.setFont(new Font("Segoe UI", Font.BOLD, 18));
 
@@ -210,7 +210,11 @@ public class Menu_Principal extends JFrame {
         totalLabel.setText("TOTAL: $" + String.format("%.2f", total));
     }
 
-private void procesarVenta() {
+    private void procesarVenta() {
+        Pedido pedido = new Pedido();
+        double totalFinal;
+        double iva = 0;
+
         if (carrito.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No hay productos en la orden", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
@@ -230,11 +234,13 @@ private void procesarVenta() {
         //Lógica según el tipo de pedido
         if (seleccion == 0) {
             // --- FLUJO: A DOMICILIO ---
+            pedido.setTipoOrdenIdTipoOrden(2);
             String telefono = JOptionPane.showInputDialog(this, "Ingrese el teléfono del cliente:");
-            if (telefono == null || telefono.trim().isEmpty()) return; // El usuario canceló
-            
-            boolean clienteExiste = false; 
-            
+            if (telefono == null || telefono.trim().isEmpty()) {
+                return; // El usuario canceló
+            }
+            boolean clienteExiste = false;
+
             if (!clienteExiste) {
                 JOptionPane.showMessageDialog(this, "Cliente no encontrado. Debe registrarlo primero.");
                 return;
@@ -243,28 +249,32 @@ private void procesarVenta() {
                 JOptionPane.showMessageDialog(this, "Cliente encontrado."); // Mostrar info del cliente
             }
 
+            iva = total * 0.16;
+            totalFinal = total + iva;
+
         } else if (seleccion == 1) {
             // --- FLUJO: PARA COMER AQUÍ ---
+            pedido.setTipoOrdenIdTipoOrden(1);
             nombreComedor = JOptionPane.showInputDialog(this, "Nombre del cliente (para llamarlo):");
-            if (nombreComedor == null || nombreComedor.trim().isEmpty()) return; // El usuario canceló
-            
+            if (nombreComedor == null || nombreComedor.trim().isEmpty()) {
+                return; // El usuario canceló
+            }
+
+            totalFinal = total;
         } else {
-            return; 
+            return;
         }
-        double iva = total * 0.16;
-        double totalFinal = total + iva;
 
         overlay.setVisible(true);
-        
+
         DialogoCobro cobroDialog = new DialogoCobro(this, totalFinal);
         cobroDialog.setVisible(true);
         overlay.setVisible(false);
-        
+
         if (cobroDialog.isConfirmado()) {
             double montoRecibido = cobroDialog.getMontoRecibido();
 
             // Preparar objetos para BD
-            Pedido pedido = new Pedido();
             pedido.setFecha(LocalDateTime.now());
             pedido.setSubtotal(total);
             pedido.setIva(iva);
@@ -272,24 +282,23 @@ private void procesarVenta() {
             pedido.setEstadoPedidoIdEstadoPedido(1);
             pedido.setAdministradorIdAdministrador(1);
             pedido.setCajeroIdCajero(1);
-            pedido.setClienteIdCliente(idClienteFinal); 
+            pedido.setClienteIdCliente(idClienteFinal);
 
             Pago pago = new Pago();
-            pago.setMonto(montoRecibido); 
+            pago.setMonto(montoRecibido);
             pago.setFecha(LocalDateTime.now());
             pago.setPropina(0);
             pago.setCajaIdCaja(1);
 
-            
             ServicioVenta servicio = new ServicioVenta();
             boolean ok = servicio.procesarVenta(pedido, carrito, pago);
 
             if (ok) {
-                
-                int imprimir = JOptionPane.showConfirmDialog(this, 
-                        "Venta registrada con éxito.\n¿Desea imprimir una copia del ticket?", 
-                        "Venta Exitosa", 
-                        JOptionPane.YES_NO_OPTION, 
+
+                int imprimir = JOptionPane.showConfirmDialog(this,
+                        "Venta registrada con éxito.\n¿Desea imprimir una copia del ticket?",
+                        "Venta Exitosa",
+                        JOptionPane.YES_NO_OPTION,
                         JOptionPane.INFORMATION_MESSAGE);
 
                 if (imprimir == JOptionPane.YES_OPTION) {
@@ -316,10 +325,10 @@ private void procesarVenta() {
 
         for (Producto p : productos) {
             productosPanel.add(createCard(
-                p.getNombre(),
-                p.getPrecioBase(),
-                p.getIdProducto(),
-                p.getCategoria()
+                    p.getNombre(),
+                    p.getPrecioBase(),
+                    p.getIdProducto(),
+                    p.getCategoria()
             ));
         }
 

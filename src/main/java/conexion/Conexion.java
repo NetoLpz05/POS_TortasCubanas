@@ -6,9 +6,9 @@ import java.sql.SQLException;
 
 public class Conexion {
     // Cambia "tortas_cubanas_db" por el nombre real de tu base de datos
-    private static final String URL = "jdbc:mysql://localhost:3306/tortas_cubanas_db?useSSL=false&serverTimezone=UTC";
+    private static final String URL = "jdbc:mysql://localhost:3306/tortasCubanas?useSSL=false&serverTimezone=UTC";
     private static final String USUARIO = "root"; // User
-    private static final String PASSWORD = "itson"; // Password
+    private static final String PASSWORD = "1093"; // Password
 
     public static Connection obtenerConexion() {
         Connection conexion = null;
