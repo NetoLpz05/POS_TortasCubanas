@@ -18,7 +18,7 @@ public class PedidoDAO {
     public boolean registrarVentaCompleta(Pedido pedido, List<ProductoPedido> detalles, Pago pago) {
         Connection con = null;
         
-        String sqlPedido = "INSERT INTO Pedido (fecha, subtotal, iva, total, EstadoPedido_idEstadoPedido, Cliente_idCliente, Administrador_idAdministrador, Cajero_idCajero, TipoOrden_idTipoOrden) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlPedido = "INSERT INTO Pedido (fecha, subtotal, iva, total, EstadoPedido_idEstadoPedido, Cliente_idCliente, Administrador_idAdministrador, Cajero_idCajero) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         String sqlDetalle = "INSERT INTO ProductoPedido (precio, detalles, Pedido_idPedido, Carrito_idCarrito, Producto_idProducto) VALUES (?, ?, ?, ?, ?)";
         String sqlPago = "INSERT INTO Pago (monto, fecha, propina, Pedido_idPedido, Caja_idCaja) VALUES (?, ?, ?, ?, ?)";
         String sqlActualizarCaja = "UPDATE Caja SET totalVentas = totalVentas + ? WHERE idCaja = ?";
@@ -48,9 +48,7 @@ public class PedidoDAO {
             } else {
                 psPedido.setNull(8, java.sql.Types.INTEGER);
             }
-            
-            psPedido.setInt(9, pedido.getTipoOrdenIdTipoOrden());
-            
+                        
             int filasAfectadas = psPedido.executeUpdate();
             if (filasAfectadas == 0) {
                 throw new SQLException("Fallo al crear el pedido.");

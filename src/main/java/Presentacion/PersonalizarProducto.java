@@ -18,6 +18,8 @@ public class PersonalizarProducto extends JDialog {
     private String detalles = "";
     private JTextArea notas;
     private JPanel opciones;
+    private double precioExtra = 0;
+    private java.util.Map<String, Double> preciosExtras = new java.util.HashMap<>();
 
     public PersonalizarProducto(JFrame parent, String producto, String categoria) {
         super(parent, true);
@@ -48,64 +50,73 @@ public class PersonalizarProducto extends JDialog {
         String[] extras;
 
         if (producto.equalsIgnoreCase("Orden de Quesadillas")) {
-
-            extras = new String[]{
-                "Con carne", "Sin frijol", "Extra queso",
-                "Tortilla de harina", "Sin verdura"
-            };
+            preciosExtras.put("Extra carne", 15.0);
+            preciosExtras.put("Sin frijol", 0.0);
+            preciosExtras.put("Extra queso", 10.0);
+            preciosExtras.put("Sin verdura", 0.0);
 
         } else if (producto.equalsIgnoreCase("Orden de Burritos de Machaca")) {
-
-            extras = new String[]{
-                "Sin frijol", "Extra carne",
-                "Con tortilla de harina", "Sin verdura"
-            };
+            preciosExtras.put("Sin frijol", 0.0);
+            preciosExtras.put("Extra Carne", 10.0);
+            preciosExtras.put("Sin verdura", 0.0);
 
         } else if (producto.equalsIgnoreCase("Taco de Pierna o Pollo")) {
-
-            extras = new String[]{
-                "Con salsa", "Sin salsa", "Extra carne",
-                "Sin verdura"
-            };
+            preciosExtras.put("Sin Verdura", 0.0);
+            preciosExtras.put("Extra Carne", 15.0);
+            preciosExtras.put("Extra Frijol", 10.0);
+            preciosExtras.put("Pieza Extra Aguacate", 10.0);
+            preciosExtras.put("Extra Queso", 15.0);
 
         } else if (producto.equalsIgnoreCase("Agua Fresca 1L") ||
                    producto.equalsIgnoreCase("Agua Fresca 1/2L")) {
-
-            extras = new String[]{
-                "Jamaica", "Horchata", "Cebada"
-            };
+            preciosExtras.put("Jamaica", 0.0);
+            preciosExtras.put("Horchata", 0.0);
+            preciosExtras.put("Cebada", 0.0);
 
         } else if (producto.equalsIgnoreCase("Refresco 355ml") ||
                    producto.equalsIgnoreCase("Refresco 600ml")) {
-
-            extras = new String[]{
-                "Coca-Cola", "Sprite", "Fanta de Naranja",
-                "Manzanita", "Coca Light", "Coca Zero", "Fresca", "Fanta de Fresa"
-            };
+            preciosExtras.put("Coca-Cola", 0.0);
+            preciosExtras.put("Sprite", 0.0);
+            preciosExtras.put("Fanta de Naranja", 0.0);
+            preciosExtras.put("Manzanita", 0.0);
+            preciosExtras.put("Coca Light", 0.0);
+            preciosExtras.put("Coca Zero", 0.0);
+            preciosExtras.put("Fresca", 0.0);
+            preciosExtras.put("Fanta de Fresa", 0.0);
 
         } else {
             switch (categoria) {
-
                 case "TORTAS":
-                    extras = new String[]{
-                        "Sin Chile", "Sin Queso", "Sin Jamón",
-                        "Sin Aguacate", "Semi-Dorada", "Partida"
-                    };
+                    preciosExtras.put("Sin Chile", 0.0);
+                    preciosExtras.put("Sin Queso", 0.0);
+                    preciosExtras.put("Sin Jamón", 0.0);
+                    preciosExtras.put("Sin Aguacate", 0.0);
+                    preciosExtras.put("Semi-Dorada", 0.0);
+                    preciosExtras.put("Partida", 0.0);
+                    
+                    preciosExtras.put("Extra Jamón", 10.0);
+                    preciosExtras.put("Extra Queso", 10.0);
+                    preciosExtras.put("Extra Jamón y Queso", 10.0);
+                    preciosExtras.put("Pieza Extra Aguacate", 10.0);
+                    preciosExtras.put("Extra Frijol", 10.0);
+                    preciosExtras.put("Extra Mostaza", 10.0);
+                    preciosExtras.put("Pieza Extra Tomate", 10.0);
                     break;
-
                 case "EXTRAS":
-                    extras = new String[]{
-                        "Agregar aparte"
-                    };
+                    preciosExtras.put("Agregar aparte", 10.0);
                     break;
-
                 default:
                     extras = new String[]{};
             }
         }
 
-        for (String e : extras) {
-            opciones.add(new JToggleButton(e));
+        for (java.util.Map.Entry<String, Double> entry : preciosExtras.entrySet()) {
+            String label = entry.getValue() > 0
+                    ? entry.getKey() + " (+$" + entry.getValue() + ")"
+                    : entry.getKey();
+            JToggleButton btn = new JToggleButton(label);
+            btn.putClientProperty("precioExtra", entry.getValue());
+            opciones.add(btn);
         }
 
         notas = new JTextArea(3,20);
@@ -125,6 +136,7 @@ public class PersonalizarProducto extends JDialog {
 
         agregar.addActionListener(e -> {
             confirmado = true;
+            precioExtra = 0;
 
             StringBuilder sb = new StringBuilder();
 
@@ -132,21 +144,17 @@ public class PersonalizarProducto extends JDialog {
                 if (c instanceof JToggleButton) {
                     JToggleButton btn = (JToggleButton) c;
                     if (btn.isSelected()) {
-                        if (sb.length() > 0) {
-                            sb.append(", ");
-                        }
+                        if (sb.length() > 0) sb.append(", ");
                         sb.append(btn.getText());
+
+                        double costo = (double) btn.getClientProperty("precioExtra");
+                        precioExtra += costo;
                     }
                 }
             }
-            
-            cancelar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            agregar.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
             if (!notas.getText().trim().isEmpty()) {
-                if (sb.length() > 0) {
-                    sb.append(" | ");
-                }
+                if (sb.length() > 0) sb.append(" | ");
                 sb.append(notas.getText().trim());
             }
 
@@ -173,5 +181,9 @@ public class PersonalizarProducto extends JDialog {
 
     public boolean tieneDetalles() {
         return detalles != null && !detalles.trim().isEmpty();
+    }
+    
+    public double getPrecioExtra() { 
+        return precioExtra; 
     }
 }

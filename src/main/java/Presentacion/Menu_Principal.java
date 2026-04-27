@@ -98,19 +98,13 @@ public class Menu_Principal extends JFrame {
 
                 overlay.setVisible(true);
 
-                PersonalizarProducto dialog
-                        = new PersonalizarProducto(Menu_Principal.this, nombre, categoria);
+                PersonalizarProducto dialog = new PersonalizarProducto(Menu_Principal.this, nombre, categoria);
 
                 dialog.setVisible(true);
                 overlay.setVisible(false);
 
                 if (dialog.isConfirmado()) {
-
-                    double precioFinal = precio;
-
-                    if (dialog.tieneDetalles()) {
-                        precioFinal += 10;
-                    }
+                    double precioFinal = precio + dialog.getPrecioExtra();
 
                     ProductoPedido pp = new ProductoPedido();
                     pp.setPrecio(precioFinal);
