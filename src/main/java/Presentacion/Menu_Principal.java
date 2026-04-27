@@ -4,6 +4,7 @@ package Presentacion;
  *
  * @author Usuario
  */
+import Datos.ClienteDAO;
 import Datos.ProductoDAO;
 import com.formdev.flatlaf.FlatLightLaf;
 import javax.swing.*;
@@ -233,14 +234,15 @@ public class Menu_Principal extends JFrame {
             if (telefono == null || telefono.trim().isEmpty()) {
                 return; // El usuario canceló
             }
-            boolean clienteExiste = false;
+            ClienteDAO clienteDAO = new ClienteDAO();
+            Cliente cliente = clienteDAO.buscarPorTelefono(telefono.trim());
 
-            if (!clienteExiste) {
+            if (cliente == null) {
                 JOptionPane.showMessageDialog(this, "Cliente no encontrado. Debe registrarlo primero.");
                 return;
             } else {
-                //idClienteFinal = cliente.getIdCliente();
-                JOptionPane.showMessageDialog(this, "Cliente encontrado."); // Mostrar info del cliente
+                idClienteFinal = cliente.getIdCliente();
+                JOptionPane.showMessageDialog(this, "Cliente encontrado: " + cliente.getNombre());
             }
 
             iva = total * 0.16;
