@@ -232,7 +232,7 @@ public class Menu_Principal extends JFrame {
         //Lógica según el tipo de pedido
         if (seleccion == 0) {
             // --- FLUJO: A DOMICILIO ---
-            pedido.setTipoOrdenIdTipoOrden(2);
+            pedido.setTipoOrden("A DOMICILIO");
             String telefono = JOptionPane.showInputDialog(this, "Ingrese el teléfono del cliente:");
             if (telefono == null || telefono.trim().isEmpty()) {
                 return; // El usuario canceló
@@ -253,7 +253,7 @@ public class Menu_Principal extends JFrame {
 
         } else if (seleccion == 1) {
             // --- FLUJO: PARA COMER AQUÍ ---
-            pedido.setTipoOrdenIdTipoOrden(1);
+            pedido.setTipoOrden("PARA COMER AQUÍ");
             nombreComedor = JOptionPane.showInputDialog(this, "Nombre del cliente (para llamarlo):");
             if (nombreComedor == null || nombreComedor.trim().isEmpty()) {
                 return; // El usuario canceló

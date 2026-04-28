@@ -39,7 +39,7 @@ public class POS_TortasCubanas {
             System.out.println("Tipo de orden:");
             System.out.println("1. Comer aqui");
             System.out.println("2. Para llevar");
-            int tipoOrdenId = sc.nextInt();
+//            int tipoOrdenId = sc.nextInt();
 
             // ================== PRODUCTO ==================
             Producto producto = productoDAO.buscarProducto(1);
@@ -79,7 +79,7 @@ public class POS_TortasCubanas {
             pedido.setClienteIdCliente(1);
 
             // 🔥 IMPORTANTE
-            pedido.setTipoOrdenIdTipoOrden(tipoOrdenId);
+//            pedido.setTipoOrden(tipoOrdenId);
 
             // ================== DEBUG ==================
             System.out.println("\n=== DEBUG PEDIDO ===");
