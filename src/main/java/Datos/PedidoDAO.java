@@ -18,7 +18,7 @@ public class PedidoDAO {
     public boolean registrarVentaCompleta(Pedido pedido, List<ProductoPedido> detalles, Pago pago) {
         Connection con = null;
         
-        String sqlPedido = "INSERT INTO Pedido (fecha, subtotal, iva, total, EstadoPedido_idEstadoPedido, Cliente_idCliente, Administrador_idAdministrador, Cajero_idCajero) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlPedido = "INSERT INTO Pedido (tipoOrden, fecha, subtotal, iva, total, EstadoPedido_idEstadoPedido, Cliente_idCliente, Administrador_idAdministrador, Cajero_idCajero) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         String sqlDetalle = "INSERT INTO ProductoPedido (precio, detalles, Pedido_idPedido, Carrito_idCarrito, Producto_idProducto) VALUES (?, ?, ?, ?, ?)";
         String sqlPago = "INSERT INTO Pago (monto, fecha, propina, Pedido_idPedido, Caja_idCaja) VALUES (?, ?, ?, ?, ?)";
         String sqlActualizarCaja = "UPDATE Caja SET totalVentas = totalVentas + ? WHERE idCaja = ?";
@@ -29,24 +29,25 @@ public class PedidoDAO {
 
             PreparedStatement psPedido = con.prepareStatement(sqlPedido, Statement.RETURN_GENERATED_KEYS);
             
-            psPedido.setTimestamp(1, Timestamp.valueOf(pedido.getFecha())); 
-            psPedido.setDouble(2, pedido.getSubtotal());
-            psPedido.setDouble(3, pedido.getIva());
-            psPedido.setDouble(4, pedido.getTotal());
-            psPedido.setInt(5, pedido.getEstadoPedidoIdEstadoPedido());
+            psPedido.setString(1, pedido.getTipoOrden());
+            psPedido.setTimestamp(2, Timestamp.valueOf(pedido.getFecha())); 
+            psPedido.setDouble(3, pedido.getSubtotal());
+            psPedido.setDouble(4, pedido.getIva());
+            psPedido.setDouble(5, pedido.getTotal());
+            psPedido.setInt(6, pedido.getEstadoPedidoIdEstadoPedido());
             
             if (pedido.getClienteIdCliente() > 0) {
-                psPedido.setInt(6, pedido.getClienteIdCliente());
+                psPedido.setInt(7, pedido.getClienteIdCliente());
             } else {
-                psPedido.setNull(6, java.sql.Types.INTEGER);
+                psPedido.setNull(7, java.sql.Types.INTEGER);
             }
             
-            psPedido.setInt(7, pedido.getAdministradorIdAdministrador());
+            psPedido.setInt(8, pedido.getAdministradorIdAdministrador());
             
             if (pedido.getCajeroIdCajero() > 0) {
-                psPedido.setInt(8, pedido.getCajeroIdCajero());
+                psPedido.setInt(9, pedido.getCajeroIdCajero());
             } else {
-                psPedido.setNull(8, java.sql.Types.INTEGER);
+                psPedido.setNull(9, java.sql.Types.INTEGER);
             }
                         
             int filasAfectadas = psPedido.executeUpdate();

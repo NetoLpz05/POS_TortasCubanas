@@ -17,18 +17,18 @@ public class Pedido {
     private int clienteIdCliente;
     private int administradorIdAdministrador;
     private int cajeroIdCajero;
-    private int tipoOrdenIdTipoOrden;
+    private String tipoOrden;
 
     public Pedido() {
     }
 
-    public Pedido(int idPedido, int cajeroIdCajero, int administradorIdAdministrador, int clienteIdCliente, int estadoPedidoIdEstadoPedido, int tipoOrdenIdTipoOrden, double total, double iva, double subtotal, LocalDateTime fecha) {
+    public Pedido(int idPedido, int cajeroIdCajero, int administradorIdAdministrador, int clienteIdCliente, int estadoPedidoIdEstadoPedido, String tipoOrden, double total, double iva, double subtotal, LocalDateTime fecha) {
         this.idPedido = idPedido;
         this.cajeroIdCajero = cajeroIdCajero;
         this.administradorIdAdministrador = administradorIdAdministrador;
         this.clienteIdCliente = clienteIdCliente;
         this.estadoPedidoIdEstadoPedido = estadoPedidoIdEstadoPedido;
-        this.tipoOrdenIdTipoOrden = tipoOrdenIdTipoOrden;
+        this.tipoOrden = tipoOrden;
         this.total = total;
         this.iva = iva;
         this.subtotal = subtotal;
@@ -75,12 +75,12 @@ public class Pedido {
         this.estadoPedidoIdEstadoPedido = estadoPedidoIdEstadoPedido;
     }
 
-    public int getTipoOrdenIdTipoOrden() {
-        return tipoOrdenIdTipoOrden;
+    public String getTipoOrden() {
+        return tipoOrden;
     }
 
-    public void setTipoOrdenIdTipoOrden(int tipoOrdenIdTipoOrden) {
-        this.tipoOrdenIdTipoOrden = tipoOrdenIdTipoOrden;
+    public void setTipoOrden(String tipoOrden) {
+        this.tipoOrden = tipoOrden;
     }
 
     public double getTotal() {
@@ -127,6 +127,6 @@ public class Pedido {
                 + ", clienteIdCliente=" + clienteIdCliente
                 + ", administradorIdAdministrador=" + administradorIdAdministrador
                 + ", cajeroIdCajero=" + cajeroIdCajero
-                + ", tipoOrdenIdTipoOrden=" + tipoOrdenIdTipoOrden + '}';
+                + ", tipoOrden=" + tipoOrden + '}';
     }
 }
