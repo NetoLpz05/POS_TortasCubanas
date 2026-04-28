@@ -115,4 +115,41 @@ public class PedidoDAO {
             }
         }
     }
+    
+    // Método para el Bug 26 (Buscar Venta)
+public Pedido buscarPorId(int idPedido) {
+    String sql = "SELECT * FROM Pedido WHERE idPedido = ?";
+    try (Connection con = Conexion.obtenerConexion();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        
+        ps.setInt(1, idPedido);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                Pedido pedido = new Pedido();
+                pedido.setIdPedido(rs.getInt("idPedido"));
+                // Mapear los demás campos importantes...
+                pedido.setTotal(rs.getDouble("total"));
+                pedido.setEstadoPedidoIdEstadoPedido(rs.getInt("EstadoPedido_idEstadoPedido"));
+                return pedido;
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null; // Retorna null si no existe
+}
+
+// Método para actualizar el estado a "Cancelado"
+public boolean cambiarEstado(int idPedido, int idEstadoNuevo) {
+    String sql = "UPDATE Pedido SET EstadoPedido_idEstadoPedido = ? WHERE idPedido = ?";
+    try (Connection con = Conexion.obtenerConexion();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setInt(1, idEstadoNuevo);
+        ps.setInt(2, idPedido);
+        return ps.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
+    }
+}
 }

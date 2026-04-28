@@ -16,6 +16,9 @@ import java.util.List;
 
 import Dominio.*;
 import Negocio.ServicioVenta;
+import Datos.PedidoDAO;
+import Negocio.AdministradorBO;
+import Negocio.IAdministradorBO;
 
 public class Menu_Principal extends JFrame {
 
@@ -331,7 +334,63 @@ public class Menu_Principal extends JFrame {
         productosPanel.revalidate();
         productosPanel.repaint();
     }
+    private void iniciarFlujoCancelacion() {
+    String idStr = JOptionPane.showInputDialog(this, "Ingrese el ID del Ticket / Pedido a cancelar:");
+    if (idStr == null || idStr.trim().isEmpty()) return;
 
+    int idPedido;
+    try {
+        idPedido = Integer.parseInt(idStr);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "ID inválido. Ingrese solo números.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    
+    Datos.PedidoDAO pedidoDAO = new Datos.PedidoDAO();
+
+    // FIX BUG 26: Buscar venta inexistente
+    Dominio.Pedido pedidoEncontrado = pedidoDAO.buscarPorId(idPedido);
+    if (pedidoEncontrado == null) {
+        JOptionPane.showMessageDialog(this, "No se encontró ninguna venta con el ID: " + idPedido, "Búsqueda Fallida", JOptionPane.ERROR_MESSAGE);
+        return; 
+    }
+    
+    // FIX BUG 27: Intento de cancelar venta ya cancelada
+    int ESTADO_CANCELADO = 2; 
+    if (pedidoEncontrado.getEstadoPedidoIdEstadoPedido() == ESTADO_CANCELADO) {
+        JOptionPane.showMessageDialog(this, "Acción denegada: Esta venta ya se encuentra cancelada.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
+    
+    int confirmacion = JOptionPane.showConfirmDialog(this, 
+            "Venta encontrada por un Total de: $" + pedidoEncontrado.getTotal() + "\n¿Está seguro de querer cancelarla?", 
+            "Confirmar Cancelación", JOptionPane.YES_NO_OPTION);
+
+    if (confirmacion == JOptionPane.YES_OPTION) {
+        // FIX BUG 25: Contraseña de encargado
+        JPasswordField pwdField = new JPasswordField();
+        Object[] mensaje = {"Para autorizar, ingrese la contraseña de Encargado/Administrador:", pwdField};
+        
+        int auth = JOptionPane.showConfirmDialog(this, mensaje, "Autorización Requerida", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+        
+        if (auth == JOptionPane.OK_OPTION) {
+            String password = new String(pwdField.getPassword());            
+            Negocio.IAdministradorBO adminBO = new Negocio.AdministradorBO();
+            
+            if (adminBO.validarPassword(password)) {                
+                boolean exito = pedidoDAO.cambiarEstado(idPedido, ESTADO_CANCELADO);
+                
+                if (exito) {
+                    JOptionPane.showMessageDialog(this, "La venta ha sido cancelada exitosamente.", "Operación Exitosa", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Error al actualizar la base de datos.", "Error SQL", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Contraseña incorrecta. Autorización denegada.", "Acceso Denegado", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+}
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(new FlatLightLaf());
