@@ -18,7 +18,7 @@ public class PedidoDAO {
     public boolean registrarVentaCompleta(Pedido pedido, List<ProductoPedido> detalles, Pago pago) {
         Connection con = null;
         
-        String sqlPedido = "INSERT INTO Pedido (tipoOrden, fecha, subtotal, iva, total, EstadoPedido_idEstadoPedido, Cliente_idCliente, Administrador_idAdministrador, Cajero_idCajero) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlPedido = "INSERT INTO Pedido (tipoOrden, fecha, subtotal, iva, total, EstadoPedido_idEstadoPedido, Cliente_idCliente, Administrador_idAdministrador, Cajero_idCajero) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         String sqlDetalle = "INSERT INTO ProductoPedido (precio, detalles, Pedido_idPedido, Carrito_idCarrito, Producto_idProducto) VALUES (?, ?, ?, ?, ?)";
         String sqlPago = "INSERT INTO Pago (monto, fecha, propina, Pedido_idPedido, Caja_idCaja) VALUES (?, ?, ?, ?, ?)";
         String sqlActualizarCaja = "UPDATE Caja SET totalVentas = totalVentas + ? WHERE idCaja = ?";
@@ -117,7 +117,6 @@ public class PedidoDAO {
         }
     }
     
-    // Método para el Bug 26 (Buscar Venta)
 public Pedido buscarPorId(int idPedido) {
     String sql = "SELECT * FROM Pedido WHERE idPedido = ?";
     try (Connection con = Conexion.obtenerConexion();
@@ -137,20 +136,19 @@ public Pedido buscarPorId(int idPedido) {
     } catch (SQLException e) {
         e.printStackTrace();
     }
-    return null; // Retorna null si no existe
+    return null;
 }
 
-// Método para actualizar el estado a "Cancelado"
 public boolean cambiarEstado(int idPedido, int idEstadoNuevo) {
     String sql = "UPDATE Pedido SET EstadoPedido_idEstadoPedido = ? WHERE idPedido = ?";
-    try (Connection con = Conexion.obtenerConexion();
-         PreparedStatement ps = con.prepareStatement(sql)) {
-        ps.setInt(1, idEstadoNuevo);
-        ps.setInt(2, idPedido);
-        return ps.executeUpdate() > 0;
-    } catch (SQLException e) {
-        e.printStackTrace();
-        return false;
+        try (Connection con = Conexion.obtenerConexion();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idEstadoNuevo);
+            ps.setInt(2, idPedido);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
-}
 }

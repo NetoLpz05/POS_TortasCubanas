@@ -16,9 +16,8 @@ import java.util.List;
 
 import Dominio.*;
 import Negocio.ServicioVenta;
-import Datos.PedidoDAO;
-import Negocio.AdministradorBO;
-import Negocio.IAdministradorBO;
+import Utils.TicketGenerator;
+import java.io.File;
 
 public class Menu_Principal extends JFrame {
 
@@ -141,6 +140,37 @@ public class Menu_Principal extends JFrame {
         listaOrden.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         listaOrden.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
+        listaOrden.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value,
+                    int index, boolean isSelected, boolean cellHasFocus) {
+
+                JTextArea area = new JTextArea(value.toString());
+                area.setLineWrap(true);
+                area.setWrapStyleWord(true);
+                area.setOpaque(true);
+                area.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+                area.setBorder(new EmptyBorder(5,5,5,5));
+                
+                area.setSize(list.getWidth(), Short.MAX_VALUE);
+
+                if (isSelected) {
+                    area.setBackground(list.getSelectionBackground());
+                    area.setForeground(list.getSelectionForeground());
+                } else {
+                    area.setBackground(Color.WHITE);
+                    area.setForeground(Color.BLACK);
+                }
+
+                return area;
+            }
+        });
+        
+        listaOrden.setFixedCellHeight(-1);
+        
+        JScrollPane scroll = new JScrollPane(listaOrden);
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
         listaOrden.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent e) {
@@ -149,7 +179,6 @@ public class Menu_Principal extends JFrame {
                     int index = listaOrden.getSelectedIndex();
 
                     if (index >= 0) {
-
                         int confirm = JOptionPane.showConfirmDialog(
                                 Menu_Principal.this,
                                 "¿Eliminar este producto?",
@@ -217,7 +246,6 @@ public class Menu_Principal extends JFrame {
             JOptionPane.showMessageDialog(this, "No hay productos en la orden", "Atención", JOptionPane.WARNING_MESSAGE);
             return;
         }
-        // 1. Preguntar el tipo de pedido
         String[] opciones = {"A Domicilio", "Para Comer Aquí", "Cancelar"};
         int seleccion = JOptionPane.showOptionDialog(this,
                 "¿Cuál es el tipo de pedido?",
@@ -226,16 +254,14 @@ public class Menu_Principal extends JFrame {
                 JOptionPane.QUESTION_MESSAGE,
                 null, opciones, opciones[1]);
 
-        int idClienteFinal = 1; // ID por defecto para "Público General" cambienla si no cala
+        int idClienteFinal = 1;
         String nombreComedor = "";
 
-        //Lógica según el tipo de pedido
         if (seleccion == 0) {
-            // --- FLUJO: A DOMICILIO ---
             pedido.setTipoOrden("A DOMICILIO");
             String telefono = JOptionPane.showInputDialog(this, "Ingrese el teléfono del cliente:");
             if (telefono == null || telefono.trim().isEmpty()) {
-                return; // El usuario canceló
+                return;
             }
             ClienteDAO clienteDAO = new ClienteDAO();
             Cliente cliente = clienteDAO.buscarPorTelefono(telefono.trim());
@@ -252,11 +278,10 @@ public class Menu_Principal extends JFrame {
             totalFinal = total + iva;
 
         } else if (seleccion == 1) {
-            // --- FLUJO: PARA COMER AQUÍ ---
             pedido.setTipoOrden("PARA COMER AQUÍ");
             nombreComedor = JOptionPane.showInputDialog(this, "Nombre del cliente (para llamarlo):");
             if (nombreComedor == null || nombreComedor.trim().isEmpty()) {
-                return; // El usuario canceló
+                return;
             }
 
             totalFinal = total;
@@ -273,7 +298,6 @@ public class Menu_Principal extends JFrame {
         if (cobroDialog.isConfirmado()) {
             double montoRecibido = cobroDialog.getMontoRecibido();
 
-            // Preparar objetos para BD
             pedido.setFecha(LocalDateTime.now());
             pedido.setSubtotal(total);
             pedido.setIva(iva);
@@ -301,10 +325,22 @@ public class Menu_Principal extends JFrame {
                         JOptionPane.INFORMATION_MESSAGE);
 
                 if (imprimir == JOptionPane.YES_OPTION) {
-                    System.out.println("Enviando ticket a la impresora..."); // Lógica futura de impresión
-                }
+                try {
+                    File archivo = TicketGenerator.generarTicket(pedido, carrito, pago);
 
-                // Limpiar sistema para la siguiente orden
+                    if (Desktop.isDesktopSupported()) {
+                        Desktop.getDesktop().open(archivo);
+                    }
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this,
+                            "Error al generar o abrir el ticket",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    ex.printStackTrace();
+                }
+            }
+
                 carrito.clear();
                 total = 0;
                 modeloOrden.clear();
@@ -348,14 +384,12 @@ public class Menu_Principal extends JFrame {
     
     Datos.PedidoDAO pedidoDAO = new Datos.PedidoDAO();
 
-    // FIX BUG 26: Buscar venta inexistente
     Dominio.Pedido pedidoEncontrado = pedidoDAO.buscarPorId(idPedido);
     if (pedidoEncontrado == null) {
         JOptionPane.showMessageDialog(this, "No se encontró ninguna venta con el ID: " + idPedido, "Búsqueda Fallida", JOptionPane.ERROR_MESSAGE);
         return; 
     }
     
-    // FIX BUG 27: Intento de cancelar venta ya cancelada
     int ESTADO_CANCELADO = 2; 
     if (pedidoEncontrado.getEstadoPedidoIdEstadoPedido() == ESTADO_CANCELADO) {
         JOptionPane.showMessageDialog(this, "Acción denegada: Esta venta ya se encuentra cancelada.", "Aviso", JOptionPane.WARNING_MESSAGE);
@@ -367,7 +401,6 @@ public class Menu_Principal extends JFrame {
             "Confirmar Cancelación", JOptionPane.YES_NO_OPTION);
 
     if (confirmacion == JOptionPane.YES_OPTION) {
-        // FIX BUG 25: Contraseña de encargado
         JPasswordField pwdField = new JPasswordField();
         Object[] mensaje = {"Para autorizar, ingrese la contraseña de Encargado/Administrador:", pwdField};
         

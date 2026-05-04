@@ -14,7 +14,6 @@ public class AdministradorDAO {
      * @return true si la contraseña es correcta y existe un admin con ella, false en caso contrario.
      */
     public boolean validarPassword(String password) {
-        // Buscamos si hay al menos un registro en la tabla con esa contraseña
         String sql = "SELECT COUNT(*) FROM Administrador WHERE contrasena = ?";
         
         try (Connection con = Conexion.obtenerConexion();
@@ -25,7 +24,7 @@ public class AdministradorDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     int coincidencias = rs.getInt(1);
-                    return coincidencias > 0; // Retorna true si encontró 1 o más
+                    return coincidencias > 0;
                 }
             }
         } catch (SQLException e) {

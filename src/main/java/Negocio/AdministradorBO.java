@@ -10,7 +10,6 @@ public class AdministradorBO implements IAdministradorBO {
     private AdministradorDAO administradorDAO;
 
     public AdministradorBO() {
-        // Inicializamos el DAO
         this.administradorDAO = new AdministradorDAO();
     }
 

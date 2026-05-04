@@ -20,6 +20,7 @@ public class PersonalizarProducto extends JDialog {
     private JPanel opciones;
     private double precioExtra = 0;
     private java.util.Map<String, Double> preciosExtras = new java.util.HashMap<>();
+    
 
     public PersonalizarProducto(JFrame parent, String producto, String categoria) {
         super(parent, true);
@@ -46,68 +47,77 @@ public class PersonalizarProducto extends JDialog {
 
         opciones = new JPanel(new FlowLayout(FlowLayout.LEFT));
         opciones.setBackground(Color.WHITE);
+        
+        categoria = categoria.toUpperCase();
+        producto = producto.toUpperCase();
 
-        String[] extras;
+        switch (categoria) {
+            case "TORTAS":
+                preciosExtras.put("Sin Chile", 0.0);
+                preciosExtras.put("Sin Queso", 0.0);
+                preciosExtras.put("Sin Jamón", 0.0);
+                preciosExtras.put("Sin Aguacate", 0.0);
+                preciosExtras.put("Semi-Dorada", 0.0);
+                preciosExtras.put("Partida", 0.0);
 
-        if (producto.equalsIgnoreCase("Orden de Quesadillas")) {
-            preciosExtras.put("Extra carne", 15.0);
-            preciosExtras.put("Sin frijol", 0.0);
-            preciosExtras.put("Extra queso", 10.0);
-            preciosExtras.put("Sin verdura", 0.0);
+                preciosExtras.put("Extra Jamón", 10.0);
+                preciosExtras.put("Extra Queso", 10.0);
+                preciosExtras.put("Extra Jamón y Queso", 15.0);
+                preciosExtras.put("Pieza Extra Aguacate", 10.0);
+                preciosExtras.put("Extra Frijol", 10.0);
+                preciosExtras.put("Extra Mostaza", 5.0);
+                preciosExtras.put("Pieza Extra Tomate", 5.0);
+                break;
 
-        } else if (producto.equalsIgnoreCase("Orden de Burritos de Machaca")) {
-            preciosExtras.put("Sin frijol", 0.0);
-            preciosExtras.put("Extra Carne", 10.0);
-            preciosExtras.put("Sin verdura", 0.0);
+            case "ANTOJITOS":
 
-        } else if (producto.equalsIgnoreCase("Taco de Pierna o Pollo")) {
-            preciosExtras.put("Sin Verdura", 0.0);
-            preciosExtras.put("Extra Carne", 15.0);
-            preciosExtras.put("Extra Frijol", 10.0);
-            preciosExtras.put("Pieza Extra Aguacate", 10.0);
-            preciosExtras.put("Extra Queso", 15.0);
+                if (producto.contains("QUESADILLAS")) {
+                    preciosExtras.put("Extra carne", 15.0);
+                    preciosExtras.put("Sin frijol", 0.0);
+                    preciosExtras.put("Extra queso", 10.0);
+                    preciosExtras.put("Sin verdura", 0.0);
 
-        } else if (producto.equalsIgnoreCase("Agua Fresca 1L") ||
-                   producto.equalsIgnoreCase("Agua Fresca 1/2L")) {
-            preciosExtras.put("Jamaica", 0.0);
-            preciosExtras.put("Horchata", 0.0);
-            preciosExtras.put("Cebada", 0.0);
+                } else if (producto.contains("BURRITOS")) {
+                    preciosExtras.put("Sin frijol", 0.0);
+                    preciosExtras.put("Extra carne", 10.0);
+                    preciosExtras.put("Sin verdura", 0.0);
 
-        } else if (producto.equalsIgnoreCase("Refresco 355ml") ||
-                   producto.equalsIgnoreCase("Refresco 600ml")) {
-            preciosExtras.put("Coca-Cola", 0.0);
-            preciosExtras.put("Sprite", 0.0);
-            preciosExtras.put("Fanta de Naranja", 0.0);
-            preciosExtras.put("Manzanita", 0.0);
-            preciosExtras.put("Coca Light", 0.0);
-            preciosExtras.put("Coca Zero", 0.0);
-            preciosExtras.put("Fresca", 0.0);
-            preciosExtras.put("Fanta de Fresa", 0.0);
+                } else if (producto.contains("TACO")) {
+                    preciosExtras.put("Sin verdura", 0.0);
+                    preciosExtras.put("Extra carne", 15.0);
+                    preciosExtras.put("Extra frijol", 10.0);
+                    preciosExtras.put("Pieza extra aguacate", 10.0);
+                    preciosExtras.put("Extra queso", 15.0);
+                }
 
-        } else {
-            switch (categoria) {
-                case "TORTAS":
-                    preciosExtras.put("Sin Chile", 0.0);
-                    preciosExtras.put("Sin Queso", 0.0);
-                    preciosExtras.put("Sin Jamón", 0.0);
-                    preciosExtras.put("Sin Aguacate", 0.0);
-                    preciosExtras.put("Semi-Dorada", 0.0);
-                    preciosExtras.put("Partida", 0.0);
-                    
-                    preciosExtras.put("Extra Jamón", 10.0);
-                    preciosExtras.put("Extra Queso", 10.0);
-                    preciosExtras.put("Extra Jamón y Queso", 10.0);
-                    preciosExtras.put("Pieza Extra Aguacate", 10.0);
-                    preciosExtras.put("Extra Frijol", 10.0);
-                    preciosExtras.put("Extra Mostaza", 10.0);
-                    preciosExtras.put("Pieza Extra Tomate", 10.0);
-                    break;
-                case "EXTRAS":
-                    preciosExtras.put("Agregar aparte", 10.0);
-                    break;
-                default:
-                    extras = new String[]{};
-            }
+                break;
+
+            case "BEBIDAS":
+
+                if (producto.contains("AGUA")) {
+                    preciosExtras.put("Jamaica", 0.0);
+                    preciosExtras.put("Horchata", 0.0);
+                    preciosExtras.put("Cebada", 0.0);
+
+                } else if (producto.contains("REFRESCO")) {
+                    preciosExtras.put("Coca-Cola", 0.0);
+                    preciosExtras.put("Sprite", 0.0);
+                    preciosExtras.put("Fanta Naranja", 0.0);
+                    preciosExtras.put("Manzanita", 0.0);
+                    preciosExtras.put("Coca Light", 0.0);
+                    preciosExtras.put("Coca Zero", 0.0);
+                    preciosExtras.put("Fresca", 0.0);
+                    preciosExtras.put("Fanta Fresa", 0.0);
+                }
+
+                break;
+
+            case "EXTRAS":
+                preciosExtras.put("Bolsa de Chiles", 10.0);
+                break;
+
+            default:
+                break;
         }
 
         for (java.util.Map.Entry<String, Double> entry : preciosExtras.entrySet()) {
