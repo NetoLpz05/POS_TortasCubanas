@@ -90,4 +90,56 @@ public class ProductoDAO implements IProductoDAO {
 
         return lista;
     }
+    
+    public boolean agregar(Producto producto) {
+
+    String sql = """
+        INSERT INTO Producto(nombre, precioBase, categoria)
+        VALUES(?, ?, ?)
+    """;
+
+        try (Connection con = Conexion.obtenerConexion();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setString(1, producto.getNombre());
+        ps.setDouble(2, producto.getPrecioBase());
+        ps.setString(3, producto.getCategoria());
+
+        return ps.executeUpdate() > 0;
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+
+        return false;
+    }
+}
+
+    public boolean actualizar(Producto producto) {
+
+        String sql = """
+            UPDATE Producto
+            SET nombre = ?,
+                precioBase = ?,
+                categoria = ?
+            WHERE idProducto = ?
+        """;
+
+        try (Connection con = Conexion.obtenerConexion();
+            PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setString(1, producto.getNombre());
+            ps.setDouble(2, producto.getPrecioBase());
+            ps.setString(3, producto.getCategoria());
+            ps.setInt(4, producto.getIdProducto());
+
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            return false;
+        }
+    }
 }

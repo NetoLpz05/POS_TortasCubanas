@@ -49,7 +49,7 @@ public class MenuAdministrador extends JFrame {
         // PANELS
         //contentPanel.add(new PanelPedidos(), "PEDIDOS");
         contentPanel.add(new AgendaCliente(), "CONTACTOS");
-        //contentPanel.add(new PanelProductos(), "PRODUCTOS");
+        contentPanel.add(new PanelProductos(), "PRODUCTOS");
         //contentPanel.add(new PanelFacturacion(), "FACTURACION");
 
         add(contentPanel, BorderLayout.CENTER);
