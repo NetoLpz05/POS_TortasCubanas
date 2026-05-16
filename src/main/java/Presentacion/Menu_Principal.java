@@ -259,6 +259,8 @@ public class Menu_Principal extends JFrame {
         Pedido pedido = new Pedido();
         double totalFinal;
         double iva = 0;
+        String nombreClienteTicket = "";
+        String telefonoClienteTicket = "";
 
         if (carrito.isEmpty()) {
             JOptionPane.showMessageDialog(this, "No hay productos en la orden", "Atención", JOptionPane.WARNING_MESSAGE);
@@ -289,6 +291,8 @@ public class Menu_Principal extends JFrame {
                 return;
             } else {
                 idClienteFinal = cliente.getIdCliente();
+                nombreClienteTicket = cliente.getNombre();
+                telefonoClienteTicket = cliente.getTelefono();
                 JOptionPane.showMessageDialog(this, "Cliente encontrado: " + cliente.getNombre());
             }
 
@@ -302,6 +306,7 @@ public class Menu_Principal extends JFrame {
                 return;
             }
 
+            nombreClienteTicket = nombreComedor.trim();
             totalFinal = total;
         } else {
             return;
@@ -345,7 +350,13 @@ public class Menu_Principal extends JFrame {
 
                 if (imprimir == JOptionPane.YES_OPTION) {
                 try {
-                    File archivo = TicketGenerator.generarTicket(pedido, carrito, pago);
+                    File archivo = TicketGenerator.generarTicket(
+                            pedido,
+                            carrito,
+                            pago,
+                            nombreClienteTicket,
+                            telefonoClienteTicket
+                    );
 
                     if (Desktop.isDesktopSupported()) {
                         Desktop.getDesktop().open(archivo);

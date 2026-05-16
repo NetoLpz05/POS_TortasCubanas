@@ -16,7 +16,8 @@ import java.util.List;
  */
 public class TicketGenerator {
 
-    public static File generarTicket(Pedido pedido, List<ProductoPedido> carrito, Pago pago) throws IOException {
+    public static File generarTicket(Pedido pedido, List<ProductoPedido> carrito, Pago pago,
+            String nombreCliente, String telefonoCliente) throws IOException {
 
         String nombreArchivo = "ticket_" + System.currentTimeMillis() + ".txt";
         File archivo = new File(nombreArchivo);
@@ -26,6 +27,12 @@ public class TicketGenerator {
             writer.write("====== TORTAS CUBANAS ======\n");
             writer.write("Fecha: " + pedido.getFecha().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + "\n");
             writer.write("Tipo: " + pedido.getTipoOrden() + "\n");
+            writer.write("Cliente: " + valorODefault(nombreCliente, "Publico General") + "\n");
+
+            if (telefonoCliente != null && !telefonoCliente.trim().isEmpty()) {
+                writer.write("Telefono: " + telefonoCliente.trim() + "\n");
+            }
+
             writer.write("--------------------------------\n");
 
             for (ProductoPedido p : carrito) {
@@ -52,5 +59,12 @@ public class TicketGenerator {
 
         System.out.println("Ticket generado: " + archivo.getAbsolutePath());
         return archivo;
+    }
+
+    private static String valorODefault(String valor, String valorDefault) {
+        if (valor == null || valor.trim().isEmpty()) {
+            return valorDefault;
+        }
+        return valor.trim();
     }
 }
