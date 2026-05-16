@@ -25,6 +25,8 @@ public class MenuAdministrador extends JFrame {
 
         setLayout(new BorderLayout());
 
+        add(createTopBar(), BorderLayout.NORTH);
+
         // SIDEBAR
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new GridLayout(10, 1));
@@ -47,7 +49,7 @@ public class MenuAdministrador extends JFrame {
         contentPanel = new JPanel(cardLayout);
 
         // PANELS
-        //contentPanel.add(new PanelPedidos(), "PEDIDOS");
+        contentPanel.add(new PanelPedidos(), "PEDIDOS");
         contentPanel.add(new AgendaCliente(), "CONTACTOS");
         contentPanel.add(new PanelProductos(), "PRODUCTOS");
         //contentPanel.add(new PanelFacturacion(), "FACTURACION");
@@ -66,5 +68,46 @@ public class MenuAdministrador extends JFrame {
 
         btnFacturacion.addActionListener(e ->
                 cardLayout.show(contentPanel, "FACTURACION"));
+    }
+
+    private JPanel createTopBar() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+
+        JLabel usuarioLabel = new JLabel("Usuario: Administrador");
+        usuarioLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+
+        JButton cambiarCuentaButton = new JButton("Cambiar cuenta");
+        cambiarCuentaButton.addActionListener(e -> cambiarCuenta());
+
+        panel.add(usuarioLabel, BorderLayout.WEST);
+        panel.add(cambiarCuentaButton, BorderLayout.EAST);
+
+        return panel;
+    }
+
+    private void cambiarCuenta() {
+        JPasswordField passwordField = new JPasswordField();
+        Object[] mensaje = {
+            "Ingrese el PIN o clave de la cuenta a la que desea entrar:",
+            passwordField
+        };
+
+        int opcion = JOptionPane.showConfirmDialog(
+                this,
+                mensaje,
+                "Cambiar cuenta",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (opcion != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        String clave = new String(passwordField.getPassword());
+        if (!AccesoHelper.abrirModuloDesdeClave(this, clave)) {
+            JOptionPane.showMessageDialog(this, "PIN incorrecto");
+        }
     }
 }

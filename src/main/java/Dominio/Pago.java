@@ -12,17 +12,19 @@ public class Pago {
     private double monto;
     private LocalDateTime fecha;
     private double propina;
+    private String metodoPago;
     private int pedidoIdPedido;
     private int cajaIdCaja;
 
     public Pago() {
     }
 
-    public Pago(int idPago, double monto, LocalDateTime fecha, double propina, int pedidoIdPedido, int cajaIdCaja) {
+    public Pago(int idPago, double monto, LocalDateTime fecha, double propina, String metodoPago, int pedidoIdPedido, int cajaIdCaja) {
         this.idPago = idPago;
         this.monto = monto;
         this.fecha = fecha;
         this.propina = propina;
+        this.metodoPago = metodoPago;
         this.pedidoIdPedido = pedidoIdPedido;
         this.cajaIdCaja = cajaIdCaja;
     }
@@ -59,6 +61,14 @@ public class Pago {
         this.propina = propina;
     }
 
+    public String getMetodoPago() {
+        return metodoPago;
+    }
+
+    public void setMetodoPago(String metodoPago) {
+        this.metodoPago = metodoPago;
+    }
+
     public int getPedidoIdPedido() {
         return pedidoIdPedido;
     }
@@ -82,6 +92,7 @@ public class Pago {
                 + ", monto=" + monto
                 + ", fecha=" + fecha
                 + ", propina=" + propina
+                + ", metodoPago='" + metodoPago + '\''
                 + ", pedidoIdPedido=" + pedidoIdPedido
                 + ", cajaIdCaja=" + cajaIdCaja
                 + '}';

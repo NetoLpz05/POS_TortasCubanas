@@ -40,12 +40,30 @@ public class Menu_Principal extends JFrame {
         overlay = new OverlayPanel();
         setGlassPane(overlay);
 
+        add(createTopBar(), BorderLayout.NORTH);
         add(createSidebar(), BorderLayout.WEST);
         productosPanel = new JPanel(new GridLayout(0, 3, 20, 20));
         add(new JScrollPane(productosPanel), BorderLayout.CENTER);
         add(createOrdenPanel(), BorderLayout.EAST);
 
         cargarProductos("TORTAS");
+    }
+
+    private JPanel createTopBar() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(Color.WHITE);
+        panel.setBorder(new EmptyBorder(10, 15, 10, 15));
+
+        JLabel usuarioLabel = new JLabel("Usuario: Cajero");
+        usuarioLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+
+        JButton cambiarCuentaButton = new JButton("Cambiar cuenta");
+        cambiarCuentaButton.addActionListener(e -> cambiarCuenta());
+
+        panel.add(usuarioLabel, BorderLayout.WEST);
+        panel.add(cambiarCuentaButton, BorderLayout.EAST);
+
+        return panel;
     }
 
     private JPanel createSidebar() {
@@ -311,6 +329,7 @@ public class Menu_Principal extends JFrame {
             pago.setMonto(montoRecibido);
             pago.setFecha(LocalDateTime.now());
             pago.setPropina(0);
+            pago.setMetodoPago(cobroDialog.getMetodoPago());
             pago.setCajaIdCaja(1);
 
             ServicioVenta servicio = new ServicioVenta();
@@ -370,6 +389,46 @@ public class Menu_Principal extends JFrame {
         productosPanel.revalidate();
         productosPanel.repaint();
     }
+
+    private void cambiarCuenta() {
+        if (!carrito.isEmpty()) {
+            int confirmacion = JOptionPane.showConfirmDialog(
+                    this,
+                    "Hay una orden en proceso. Si cambia de cuenta, esa orden se cerrara.\nDesea continuar?",
+                    "Cambiar cuenta",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+            );
+
+            if (confirmacion != JOptionPane.YES_OPTION) {
+                return;
+            }
+        }
+
+        JPasswordField passwordField = new JPasswordField();
+        Object[] mensaje = {
+            "Ingrese el PIN o clave de la cuenta a la que desea entrar:",
+            passwordField
+        };
+
+        int opcion = JOptionPane.showConfirmDialog(
+                this,
+                mensaje,
+                "Cambiar cuenta",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (opcion != JOptionPane.OK_OPTION) {
+            return;
+        }
+
+        String clave = new String(passwordField.getPassword());
+        if (!AccesoHelper.abrirModuloDesdeClave(this, clave)) {
+            JOptionPane.showMessageDialog(this, "PIN incorrecto");
+        }
+    }
+
     private void iniciarFlujoCancelacion() {
     String idStr = JOptionPane.showInputDialog(this, "Ingrese el ID del Ticket / Pedido a cancelar:");
     if (idStr == null || idStr.trim().isEmpty()) return;

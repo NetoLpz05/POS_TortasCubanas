@@ -42,6 +42,7 @@ public class TicketGenerator {
             writer.write(String.format("SUBTOTAL: $%.2f\n", pedido.getSubtotal()));
             writer.write(String.format("IVA: $%.2f\n", pedido.getIva()));
             writer.write(String.format("TOTAL: $%.2f\n", pedido.getTotal()));
+            writer.write("METODO DE PAGO: " + pago.getMetodoPago() + "\n");
             writer.write(String.format("PAGO: $%.2f\n", pago.getMonto()));
             writer.write(String.format("CAMBIO: $%.2f\n", (pago.getMonto() - pedido.getTotal())));
             writer.write("================================\n");

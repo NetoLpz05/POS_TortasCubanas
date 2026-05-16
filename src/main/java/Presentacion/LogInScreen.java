@@ -4,8 +4,6 @@
  */
 package Presentacion;
 
-import Datos.CajeroDAO;
-import Dominio.Cajero;
 import java.awt.*;
 import javax.swing.*;
 
@@ -25,15 +23,21 @@ public class LogInScreen extends JFrame{
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
+        JPanel header = new JPanel(new BorderLayout());
+        JLabel instrucciones = new JLabel("Ingresa PIN de cajero o clave de administrador", SwingConstants.CENTER);
+        instrucciones.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        header.add(instrucciones, BorderLayout.NORTH);
+
         pinLabel = new JLabel("••••", SwingConstants.CENTER);
         pinLabel.setFont(new Font("Segoe UI", Font.BOLD, 40));
-        add(pinLabel, BorderLayout.NORTH);
+        header.add(pinLabel, BorderLayout.CENTER);
+        add(header, BorderLayout.NORTH);
         JPanel teclado = new JPanel(new GridLayout(4,3,10,10));
-        
+
         for (int i = 1; i <= 9; i++) {
             agregarBotonNumero(teclado, String.valueOf(i));
         }
-        
+
         agregarBotonNumero(teclado, "0");
         JButton borrar = new JButton("⌫");
         borrar.addActionListener(e -> borrarNumero());
@@ -70,31 +74,13 @@ public class LogInScreen extends JFrame{
     }
 
     private void iniciarSesion() {
-        CajeroDAO dao = new CajeroDAO();
-        Cajero cajero = dao.iniciarSesion(pinIngresado);
-
-        if (cajero == null) {
-            JOptionPane.showMessageDialog(this, "PIN incorrecto");
-            pinIngresado = "";
-            actualizarPin();
+        if (AccesoHelper.abrirModuloDesdeClave(this, pinIngresado)) {
             return;
         }
 
-        dispose();
-
-        switch (cajero.getTipo().toUpperCase()) {
-
-            case "ADMIN":
-                new MenuAdministrador().setVisible(true);
-                break;
-
-            case "CAJERO":
-                new Menu_Principal().setVisible(true);
-                break;
-
-            default:
-                JOptionPane.showMessageDialog(this,"Tipo no válido");
-        }
+        JOptionPane.showMessageDialog(this, "PIN incorrecto");
+        pinIngresado = "";
+        actualizarPin();
     }
 
     public static void main(String[] args) {
