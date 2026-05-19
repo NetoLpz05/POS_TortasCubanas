@@ -66,7 +66,7 @@ public class Menu_Principal extends JFrame {
         return panel;
     }
 
-    private JPanel createSidebar() {
+ private JPanel createSidebar() {
         JPanel panel = new JPanel();
         panel.setBackground(new Color(30, 30, 30));
         panel.setPreferredSize(new Dimension(120, 0));
@@ -76,6 +76,15 @@ public class Menu_Principal extends JFrame {
         panel.add(createMenuButton("ANTOJITOS", "ANTOJITOS"));
         panel.add(createMenuButton("BEBIDAS", "BEBIDAS"));
         panel.add(createMenuButton("EXTRAS", "EXTRAS"));
+        
+        panel.add(Box.createVerticalGlue()); 
+                
+        JButton btnCancelar = createMenuButton("CANCELAR", null); 
+        btnCancelar.setBackground(new Color(200, 50, 50)); 
+        btnCancelar.addActionListener(e -> iniciarFlujoCancelacion()); 
+        
+        panel.add(btnCancelar);
+        panel.add(Box.createVerticalStrut(15));         
 
         return panel;
     }
